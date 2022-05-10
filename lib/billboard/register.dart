@@ -1,25 +1,19 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:bilbo/home/home.dart';
 import 'package:bilbo/login/login.dart';
+import 'package:qr_flutter/qr_flutter.dart';
 
 class RegisterBillboard extends StatefulWidget {
-
   RegisterBillboard({Key? key}) : super(key: key);
 
   @override
   _RegisterBillboardState createState() => _RegisterBillboardState();
-
 }
 
 class _RegisterBillboardState extends State<RegisterBillboard> {
-
-
   @override
   Widget build(BuildContext context) {
-
-
     return Scaffold(
       backgroundColor: Color(0xfff8f8fa),
       appBar: AppBar(
@@ -28,58 +22,57 @@ class _RegisterBillboardState extends State<RegisterBillboard> {
         leading: Builder(
           builder: (BuildContext context) {
             return const Icon(
-
-            Icons.arrow_back,
-            color: Color(0xff056839),
-            size: 30.0,
-
-
+              Icons.arrow_back,
+              color: Color(0xff056839),
+              size: 30.0,
             );
           },
         ),
-        title: const Text('Register Billboard',style: TextStyle(color: Color(0xff3d3c3d), fontSize: 20, fontWeight: FontWeight.w600,),),
-
+        title: const Text(
+          'Register Billboard',
+          style: TextStyle(
+            color: Color(0xff3d3c3d),
+            fontSize: 20,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
         actions: <Widget>[
-
-
           PopupMenuButton(
             onSelected: (result) async {
-              if(result == 0){
+              if (result == 0) {
                 Navigator.of(context).pop();
               }
-
             },
-
-            icon:const Icon(
-
+            icon: const Icon(
               Icons.more_vert_outlined,
               color: Color(0xff056839),
               size: 30.0,
-
-
             ),
             offset: Offset(0, kToolbarHeight),
-
             itemBuilder: (BuildContext context) => <PopupMenuEntry>[
               const PopupMenuItem(
-                child:Padding(
-                  padding: EdgeInsets.only(left:8.0,right: 25),
-                  child: Text('Logout',style: TextStyle(color: Color(0xff3e3956), fontSize: 20,fontWeight: FontWeight.w400),),
+                child: Padding(
+                  padding: EdgeInsets.only(left: 8.0, right: 25),
+                  child: Text(
+                    'Logout',
+                    style: TextStyle(
+                        color: Color(0xff3e3956),
+                        fontSize: 20,
+                        fontWeight: FontWeight.w400),
+                  ),
                 ),
                 value: 0,
               ),
-
             ],
           ),
-
         ],
       ),
-
       body: SingleChildScrollView(
         padding: EdgeInsets.all(15),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
+            QrImage(data: ""),
             Container(
               margin: const EdgeInsets.only(top: 10, left: 5, bottom: 10),
               child: Column(
@@ -116,7 +109,6 @@ class _RegisterBillboardState extends State<RegisterBillboard> {
                 padding: EdgeInsets.only(left: 5, right: 5),
                 child: TextField(
                   keyboardType: TextInputType.text,
-
                   decoration: InputDecoration(
                       enabledBorder: OutlineInputBorder(
                         borderSide: BorderSide(color: Color(0xffB3B3B3)),
@@ -147,7 +139,6 @@ class _RegisterBillboardState extends State<RegisterBillboard> {
                 padding: EdgeInsets.only(left: 5, right: 5),
                 child: TextField(
                   keyboardType: TextInputType.text,
-
                   decoration: InputDecoration(
                       enabledBorder: OutlineInputBorder(
                         borderSide: BorderSide(color: Color(0xffB3B3B3)),
@@ -178,7 +169,6 @@ class _RegisterBillboardState extends State<RegisterBillboard> {
                 padding: EdgeInsets.only(left: 5, right: 5),
                 child: TextField(
                   keyboardType: TextInputType.datetime,
-
                   decoration: InputDecoration(
                       enabledBorder: OutlineInputBorder(
                         borderSide: BorderSide(color: Color(0xffB3B3B3)),
@@ -215,7 +205,9 @@ class _RegisterBillboardState extends State<RegisterBillboard> {
                   ),
                 ),
                 onPressed: () {
-                  showDialog<void>(context: context, builder: (context) => registeredBillBoardSucc);
+                  showDialog<void>(
+                      context: context,
+                      builder: (context) => registeredBillBoardSucc);
                 },
                 child: Text('Submit Billboard',
                     style: TextStyle(
@@ -225,39 +217,39 @@ class _RegisterBillboardState extends State<RegisterBillboard> {
                     )),
               ),
             ),
-
           ],
         ),
       ),
     );
   }
-  final AlertDialog registeredBillBoardSucc = AlertDialog(
-    title: Text('Notification',style: TextStyle(
-        color: Color(0xff3e3e3e),fontSize: 18,fontWeight: FontWeight.bold
-    ),),
-    content:
-    Container(
-        height:200,
-        child: Column(
-      children: [
 
-        Text('You have successfully registered your billboard',),
-        Center(
-            child: Container(
+  final AlertDialog registeredBillBoardSucc = AlertDialog(
+    title: Text(
+      'Notification',
+      style: TextStyle(
+          color: Color(0xff3e3e3e), fontSize: 18, fontWeight: FontWeight.bold),
+    ),
+    content: Container(
+        height: 200,
+        child: Column(
+          children: [
+            Text(
+              'You have successfully registered your billboard',
+            ),
+            Center(
+                child: Container(
               margin: const EdgeInsets.only(top: 10, left: 5, bottom: 5),
               height: 130,
               width: 130,
               child: Image.asset('assets/images/qr_code_img.png'),
             )),
-      ],
-    )),
+          ],
+        )),
     actions: [
       FlatButton(
         textColor: Color(0xfffdcb03),
-        onPressed: (){
-
-        },
-        child:  Text(
+        onPressed: () {},
+        child: Text(
           "OK",
           style: TextStyle(
             color: Color(0xfffdcb03),
@@ -271,9 +263,6 @@ class _RegisterBillboardState extends State<RegisterBillboard> {
       //   },
       //   child: Text('OK'),
       // ),
-
-
     ],
   );
-
 }
