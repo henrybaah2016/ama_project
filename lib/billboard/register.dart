@@ -8,7 +8,6 @@ class RegisterBillboard extends StatefulWidget {
 
   RegisterBillboard({Key? key}) : super(key: key);
 
-
   @override
   _RegisterBillboardState createState() => _RegisterBillboardState();
 
