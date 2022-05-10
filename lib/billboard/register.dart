@@ -12,6 +12,19 @@ class RegisterBillboard extends StatefulWidget {
 }
 
 class _RegisterBillboardState extends State<RegisterBillboard> {
+  final _nameOfOrganization = TextEditingController();
+  final _location = TextEditingController();
+  final _registrationDate = TextEditingController();
+  String _billBoardInfo = "";
+
+  _submitBillboardInfo() {
+    _billBoardInfo = '''{
+      "Name of organization": ${_nameOfOrganization.text};
+      "Location of billboard": ${_location.text};
+      "Registration Date": ${_registrationDate.text};
+    }''';
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -72,7 +85,6 @@ class _RegisterBillboardState extends State<RegisterBillboard> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            QrImage(data: ""),
             Container(
               margin: const EdgeInsets.only(top: 10, left: 5, bottom: 10),
               child: Column(
@@ -205,9 +217,49 @@ class _RegisterBillboardState extends State<RegisterBillboard> {
                   ),
                 ),
                 onPressed: () {
-                  showDialog<void>(
+                  showDialog(
                       context: context,
-                      builder: (context) => registeredBillBoardSucc);
+                      builder: (context) {
+                        return AlertDialog(
+                          title: Text(
+                            'Notification',
+                            style: TextStyle(
+                                color: Color(0xff3e3e3e),
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold),
+                          ),
+                          content: Container(
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(
+                                  'You have successfully registered your billboard',
+                                ),
+                                Center(
+                                  child: QrImage(
+                                    data: _billBoardInfo,
+                                    size: 300,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          actions: [
+                            FlatButton(
+                              textColor: Color(0xfffdcb03),
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                              child: Text(
+                                "OK",
+                                style: TextStyle(
+                                  color: Color(0xfffdcb03),
+                                ),
+                              ),
+                            ),
+                          ],
+                        );
+                      });
                 },
                 child: Text('Submit Billboard',
                     style: TextStyle(
@@ -222,47 +274,4 @@ class _RegisterBillboardState extends State<RegisterBillboard> {
       ),
     );
   }
-
-  final AlertDialog registeredBillBoardSucc = AlertDialog(
-    title: Text(
-      'Notification',
-      style: TextStyle(
-          color: Color(0xff3e3e3e), fontSize: 18, fontWeight: FontWeight.bold),
-    ),
-    content: Container(
-        height: 200,
-        child: Column(
-          children: [
-            Text(
-              'You have successfully registered your billboard',
-            ),
-            Center(
-                child: Container(
-              margin: const EdgeInsets.only(top: 10, left: 5, bottom: 5),
-              height: 130,
-              width: 130,
-              child: Image.asset('assets/images/qr_code_img.png'),
-            )),
-          ],
-        )),
-    actions: [
-      FlatButton(
-        textColor: Color(0xfffdcb03),
-        onPressed: () {},
-        child: Text(
-          "OK",
-          style: TextStyle(
-            color: Color(0xfffdcb03),
-          ),
-        ),
-      ),
-      // FlatButton(
-      //   textColor: Color(0xfffdcb03),
-      //   onPressed: (){
-      //
-      //   },
-      //   child: Text('OK'),
-      // ),
-    ],
-  );
 }
