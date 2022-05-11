@@ -136,7 +136,8 @@ class _VerifyBillboardState extends State<VerifyBillboard> {
         color: Color(0xfffbbc07),
       ),
       child: Text(
-        barcode != null ? "Result : ${barcode!.code}" : "Scan a code",
+        // barcode != null ? "Result : ${barcode!.code}" : "Scan a code",
+        "Scan a code",
         maxLines: 5,
       ),
     );
