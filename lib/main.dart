@@ -1,3 +1,4 @@
+import 'package:bilbo/billboard/result.dart';
 import 'package:bilbo/splash/splash.dart';
 import 'package:flutter/material.dart';
 
@@ -18,8 +19,9 @@ class MyApp extends StatelessWidget {
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
       home: Splash(),
-
-
+      routes: {
+        Result.routeName: (context) => Result(),
+      },
     );
   }
 }

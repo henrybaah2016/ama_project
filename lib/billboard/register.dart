@@ -1,15 +1,19 @@
 import 'dart:io';
+import 'dart:typed_data';
 import 'dart:ui' as ui;
 
+// import 'package:esys_flutter_share/esys_flutter_share.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:bilbo/home/home.dart';
 import 'package:bilbo/login/login.dart';
-import 'package:gallery_saver/gallery_saver.dart';
-import 'package:path_provider/path_provider.dart';
+import 'package:image_gallery_saver/image_gallery_saver.dart';
+// import 'package:path_provider/path_provider.dart';
+// import 'package:gallery_saver/gallery_saver.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:screenshot/screenshot.dart';
 
 class RegisterBillboard extends StatefulWidget {
   RegisterBillboard({Key? key}) : super(key: key);
@@ -24,6 +28,18 @@ class _RegisterBillboardState extends State<RegisterBillboard> {
   final _locationController = TextEditingController();
   final _registrationDateController = TextEditingController();
   String _billBoardInfo = "";
+
+  ScreenshotController screenshotController = ScreenshotController();
+
+  Future<void> _saveToGallery(File imageFile) async {
+    try {
+      final result =
+          await ImageGallerySaver.saveImage(imageFile.readAsBytesSync());
+      debugPrint("Image Stored Successfully !!");
+    } on Exception catch (exp) {
+      debugPrint("Image Exception ${exp.toString()}");
+    }
+  }
 
   _validateFields() {
     if (_nameOfOrganizationController.text.isEmpty) {
@@ -54,11 +70,13 @@ class _RegisterBillboardState extends State<RegisterBillboard> {
   }
 
   _submitBillboardInfo(BuildContext context) {
-    _billBoardInfo = '''{
-      "Name of organization": ${_nameOfOrganizationController.text};
-      "Location of billboard": ${_locationController.text};
-      "Registration Date": ${_registrationDateController.text};
-    }''';
+    _billBoardInfo =
+        'Name of Organization : ${_nameOfOrganizationController.text}, Location: ${_locationController.text}, Registration Date:  ${_registrationDateController.text}';
+    // _billBoardInfo = '''{
+    // "Name of organization": ${_nameOfOrganizationController.text};
+    // "Location of billboard": ${_locationController.text};
+    // "Registration Date": ${_registrationDateController.text};
+    // }''';
 
     showDialog(
         context: context,
@@ -79,11 +97,14 @@ class _RegisterBillboardState extends State<RegisterBillboard> {
                   Text(
                     'You have successfully registered your billboard',
                   ),
-                  Center(
-                    child: QrImage(
-                      key: qrKey,
-                      data: _billBoardInfo,
-                      size: 300,
+                  Screenshot(
+                    controller: screenshotController,
+                    child: Center(
+                      child: QrImage(
+                        key: qrKey,
+                        data: _billBoardInfo,
+                        size: 300,
+                      ),
                     ),
                   ),
                 ],
@@ -93,13 +114,46 @@ class _RegisterBillboardState extends State<RegisterBillboard> {
               FlatButton(
                 textColor: Color(0xfffdcb03),
                 onPressed: () {
+                  // screenshotController.capture().then((imageFile) async {
+                  // try {
+                  // bool isGranted = await Permission.storage.isGranted;
+                  // if (isGranted) {
+                  // _saveToGallery(File.fromRawPath(imageFile!));
+                  // } else {
+                  // Ask Permission
+                  // PermissionStatus status =
+                  // await Permission.storage.request();
+                  // switch (status) {
+                  // case PermissionStatus.granted:
+                  // _saveToGallery(File.fromRawPath(imageFile!));
+                  // break;
+                  // case PermissionStatus.denied:
+                  // debugPrint(
+                  // "Storage permission required to Save Image");
+                  // break;
+                  // case PermissionStatus.permanentlyDenied:
+                  // case PermissionStatus.restricted:
+                  // debugPrint(
+                  // "Storage permission required to Save Image, allow permissions in Settings");
+                  // break;
+                  // case PermissionStatus.limited:
+                  // break;
+                  // }
+                  // }
+                  // } catch (exp) {
+                  // debugPrint("Storage Permission Error ${exp.toString()}");
+                  // }
+                  // }).catchError((err) {
+                  // debugPrint("Image catchError ${err.toString()}");
+                  // });
+
                   _nameOfOrganizationController.text = "";
                   _locationController.text = "";
                   _registrationDateController.text = "";
                   Navigator.of(context).pop();
                 },
                 child: Text(
-                  "OK",
+                  "Save",
                   style: TextStyle(
                     color: Color(0xfffdcb03),
                   ),
@@ -108,30 +162,6 @@ class _RegisterBillboardState extends State<RegisterBillboard> {
             ],
           );
         });
-  }
-
-  void takeScreenShot() async {
-    PermissionStatus res;
-    res = await Permission.storage.request();
-    if (res.isGranted) {
-      final boundary =
-          qrKey.currentContext!.findRenderObject() as RenderRepaintBoundary;
-      // We can increse the size of QR using pixel ratio
-      final image = await boundary.toImage(pixelRatio: 5.0);
-      final byteData = await (image.toByteData(format: ui.ImageByteFormat.png));
-      if (byteData != null) {
-        final pngBytes = byteData.buffer.asUint8List();
-        // getting directory of our phone
-        final directory = (await getApplicationDocumentsDirectory()).path;
-        final imgFile = File(
-          '$directory/${DateTime.now()}.png',
-        );
-        imgFile.writeAsBytes(pngBytes);
-        GallerySaver.saveImage(imgFile.path).then((success) async {
-          //In here you can show snackbar or do something in the backend at successfull download
-        });
-      }
-    }
   }
 
   @override

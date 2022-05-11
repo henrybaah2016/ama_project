@@ -1,8 +1,12 @@
+import 'dart:io';
+
+import 'package:bilbo/billboard/result.dart';
 import 'package:bilbo/home/home.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:qr_code_scanner/qr_code_scanner.dart';
 
 class VerifyBillboard extends StatefulWidget {
   VerifyBillboard({Key? key}) : super(key: key);
@@ -26,6 +30,25 @@ class _VerifyBillboardState extends State<VerifyBillboard> {
   // qrCodeResult = codeSanner.rawContent;
   // });
   // }
+  final qrKey = GlobalKey();
+  QRViewController? controller;
+  Barcode? barcode;
+
+  @override
+  void dispose() {
+    controller?.dispose();
+    super.dispose();
+  }
+
+  @override
+  void reassemble() async {
+    super.reassemble();
+    if (Platform.isAndroid) {
+      await controller!.pauseCamera();
+    }
+
+    controller!.resumeCamera();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -92,42 +115,63 @@ class _VerifyBillboardState extends State<VerifyBillboard> {
           // )
         ],
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: <Widget>[
-            Container(
-              margin: EdgeInsets.only(top: 10),
-              child: Column(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(12.0),
-                    child: Container(
-                        color: Color(0x7fbbc07),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Container(
-                              height: 200.0,
-                              width: 250.0,
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: <Widget>[],
-                              ),
-                            ),
-                          ],
-                        )),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {},
-        backgroundColor: Color(0xfffbbc07),
-        child: const Icon(Icons.qr_code_2_outlined),
+      body: Stack(
+        alignment: Alignment.center,
+        children: [
+          buildQrView(context),
+          Positioned(
+            bottom: 10,
+            child: buildResult(),
+          )
+        ],
       ),
     );
+  }
+
+  Widget buildResult() {
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(8),
+        color: Color(0xfffbbc07),
+      ),
+      child: Text(
+        barcode != null ? "Result : ${barcode!.code}" : "Scan a code",
+        maxLines: 5,
+      ),
+    );
+  }
+
+  Widget buildQrView(BuildContext context) {
+    return QRView(
+      key: qrKey,
+      onQRViewCreated: onQRViewCreated,
+      overlay: QrScannerOverlayShape(
+        cutOutSize: MediaQuery.of(context).size.width * 0.8,
+        borderWidth: 10,
+        borderLength: 20,
+        borderRadius: 10,
+        borderColor: Color(0xff056839),
+      ),
+    );
+  }
+
+  void onQRViewCreated(QRViewController mController) {
+    setState(() {
+      controller = mController;
+    });
+
+    controller!.scannedDataStream.listen((mBarCode) {
+      setState(() {
+        barcode = mBarCode;
+      });
+
+      print("BAR CODE CONTENT ${barcode!.code}");
+
+      if (barcode != null) {
+        Navigator.of(context)
+            .popAndPushNamed(Result.routeName, arguments: barcode!.code);
+      }
+    });
   }
 }
