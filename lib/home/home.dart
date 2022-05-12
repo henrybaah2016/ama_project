@@ -217,4 +217,5 @@ class _HomePageState extends State<HomePage> {
                                     height: 70,
                                     width: 70,
                                     margin:
-                                        EdgeInsets.only(
+                                        EdgeInsets.only(left: 0)
+    ),),],),),),),),],),),],),),);} } 
