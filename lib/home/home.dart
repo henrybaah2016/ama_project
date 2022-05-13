@@ -199,23 +199,38 @@ class _HomePageState extends State<HomePage> {
                             children: [
                               Expanded(
                                 child: Container(
-                                    child: Padding(
-                                        padding:
-                                            const EdgeInsets.only(left: 10),
-                                        child: Flexible(
-                                          child: Text(
-                                            'Verify Billboard',
-                                            style: TextStyle(
-                                                color: Color(0xffffffff),
-                                                fontSize: 16,
-                                                fontWeight: FontWeight.w600),
-                                          ),
-                                        ))),
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(left: 10),
+                                    child: Flexible(
+                                      child: Text(
+                                        'Verify Billboard',
+                                        style: TextStyle(
+                                            color: Color(0xffffffff),
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w600),
+                                      ),
+                                    ),
+                                  ),
+                                ),
                               ),
                               Expanded(
                                 child: Container(
                                     height: 70,
                                     width: 70,
-                                    margin:
-                                        EdgeInsets.only(left: 0)
-    ),),],),),),),),],),),],),),);} } 
+                                    margin: EdgeInsets.only(left: 0)),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
