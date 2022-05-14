@@ -16,20 +16,6 @@ class VerifyBillboard extends StatefulWidget {
 }
 
 class _VerifyBillboardState extends State<VerifyBillboard> {
-  // String? qrCodeResult;
-  // int camera = 1;
-  // bool backCamera = true;
-
-  // Future<void> _scan() async {
-  // ScanResult codeSanner = await BarcodeScanner.scan(
-  // options: ScanOptions(
-  // useCamera: camera,
-  // ),
-  // );
-  // setState(() {
-  // qrCodeResult = codeSanner.rawContent;
-  // });
-  // }
   final qrKey = GlobalKey();
   QRViewController? controller;
   Barcode? barcode;

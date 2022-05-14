@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:math' as math;
 
+import 'package:bilbo/billboard/qr_code.dart';
 import 'package:bilbo/billboard/register.dart';
 import 'package:bilbo/billboard/verify.dart';
 import 'package:bilbo/utils/utils.dart';
@@ -101,7 +102,8 @@ class _HomePageState extends State<HomePage> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => RegisterBillboard()),
+                              builder: (context) => RegisterBillboard(),
+                            ),
                           );
                         },
                         child: Container(

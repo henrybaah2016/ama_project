@@ -1,3 +1,4 @@
+import 'package:bilbo/billboard/qr_code.dart';
 import 'package:bilbo/billboard/result.dart';
 import 'package:bilbo/splash/splash.dart';
 import 'package:flutter/material.dart';
@@ -21,6 +22,7 @@ class MyApp extends StatelessWidget {
       home: Splash(),
       routes: {
         Result.routeName: (context) => Result(),
+        QrCodeScreen.routeName: (context) => QrCodeScreen(),
       },
     );
   }
