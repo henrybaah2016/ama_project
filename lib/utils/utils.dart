@@ -5,6 +5,8 @@ import 'package:bilbo/utils/mapKey.dart';
 import 'package:bilbo/utils/request_method.dart';
 import 'package:geolocator/geolocator.dart';
 
+// String formattedAddress = "";
+
 class UtilMethods {
   static Future<String> searchAddressForGeographicCoordinates(
       Position position, context) async {

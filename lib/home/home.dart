@@ -17,40 +17,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  Position? userCurrentPosition;
-
-  var geoLocator = Geolocator();
-
-  LocationPermission? _locationPermission;
-
-  checkIfLocationPermissionIsAllowed() async {
-    _locationPermission = await Geolocator.requestPermission();
-
-    if (_locationPermission == LocationPermission.denied) {
-      _locationPermission = await Geolocator.requestPermission();
-    } else {
-      locateUserPosition();
-    }
-  }
-
-  locateUserPosition() async {
-    Position cPosition = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high);
-
-    userCurrentPosition = cPosition;
-
-    String formattedAddress =
-        await UtilMethods.searchAddressForGeographicCoordinates(
-            userCurrentPosition!, context);
-    print("This is your formatted Address $formattedAddress");
-  }
-
-  @override
-  initState() {
-    super.initState();
-    checkIfLocationPermissionIsAllowed();
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -217,4 +183,27 @@ class _HomePageState extends State<HomePage> {
                                     height: 70,
                                     width: 70,
                                     margin:
-                                        EdgeInsets.only(
+                                        EdgeInsets.only(top: 10, bottom: 10),
+                                    child: Image.asset(
+                                        'assets/images/verify_billboard.png')),
+                              )
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+      // floatingActionButton: FloatingActionButton(
+      // onPressed: () {},
+      // backgroundColor: Color(0xfffbbc07),
+      // child: const Icon(Icons.image_outlined),
+      // ),
+    );
+  }
+}

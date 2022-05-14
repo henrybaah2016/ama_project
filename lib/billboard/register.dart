@@ -3,12 +3,15 @@ import 'dart:typed_data';
 import 'dart:ui' as ui;
 
 // import 'package:esys_flutter_share/esys_flutter_share.dart';
+import 'package:bilbo/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:bilbo/home/home.dart';
 import 'package:bilbo/login/login.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
+import 'package:image_picker/image_picker.dart';
 // import 'package:path_provider/path_provider.dart';
 // import 'package:gallery_saver/gallery_saver.dart';
 import 'package:qr_flutter/qr_flutter.dart';
@@ -28,8 +31,95 @@ class _RegisterBillboardState extends State<RegisterBillboard> {
   final _locationController = TextEditingController();
   final _registrationDateController = TextEditingController();
   String _billBoardInfo = "";
+  final ImagePicker _picker = ImagePicker();
+  XFile? _imageFile;
+  File? _imageFileData;
 
   ScreenshotController screenshotController = ScreenshotController();
+
+  Position? userCurrentPosition;
+
+  var geoLocator = Geolocator();
+
+  LocationPermission? _locationPermission;
+
+  String? formattedAddress;
+
+  Future<void> _showPickCameraDialog(BuildContext context) {
+    return showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text(
+              "Capture Billboard",
+              style: TextStyle(color: Color(0xff3e3e3e)),
+            ),
+            content: SingleChildScrollView(
+              child: ListBody(
+                children: [
+                  ListTile(
+                    onTap: () {
+                      _openCamera(context);
+                    },
+                    title: const Text("Open Camera"),
+                    leading: const Icon(
+                      Icons.camera,
+                      color: Color(0xfffdcb03),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        });
+  }
+
+  void _openCamera(BuildContext context) async {
+    final XFile? pickedFile = (await _picker.pickImage(
+      source: ImageSource.camera,
+      imageQuality: 50,
+      maxHeight: 500,
+      maxWidth: 500,
+    ));
+
+    setState(() {
+      if (pickedFile != null) {
+        _imageFile = pickedFile;
+      }
+    });
+
+    final File? file = File(pickedFile!.path);
+    _imageFileData = file;
+
+    Navigator.pop(context);
+  }
+
+  checkIfLocationPermissionIsAllowed() async {
+    _locationPermission = await Geolocator.requestPermission();
+
+    if (_locationPermission == LocationPermission.denied) {
+      _locationPermission = await Geolocator.requestPermission();
+    } else {
+      locateUserPosition();
+    }
+  }
+
+  locateUserPosition() async {
+    Position cPosition = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high);
+
+    userCurrentPosition = cPosition;
+
+    formattedAddress = await UtilMethods.searchAddressForGeographicCoordinates(
+        userCurrentPosition!, context);
+    print("This is your formatted Address $formattedAddress");
+  }
+
+  @override
+  initState() {
+    super.initState();
+    checkIfLocationPermissionIsAllowed();
+  }
 
   Future<void> _saveToGallery(File imageFile) async {
     try {
@@ -49,13 +139,6 @@ class _RegisterBillboardState extends State<RegisterBillboard> {
         ),
       );
       return;
-    } else if (_locationController.text.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Please enter the location of the organization'),
-        ),
-      );
-      return;
     } else if (_registrationDateController.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -71,7 +154,7 @@ class _RegisterBillboardState extends State<RegisterBillboard> {
 
   _submitBillboardInfo(BuildContext context) {
     _billBoardInfo =
-        'Name of Organization : ${_nameOfOrganizationController.text}, Location: ${_locationController.text}, Registration Date:  ${_registrationDateController.text}';
+        'Name of Organization : ${_nameOfOrganizationController.text}, Location: $formattedAddress, Registration Date:  ${_registrationDateController.text}';
     // _billBoardInfo = '''{
     // "Name of organization": ${_nameOfOrganizationController.text};
     // "Location of billboard": ${_locationController.text};
@@ -146,9 +229,7 @@ class _RegisterBillboardState extends State<RegisterBillboard> {
                   // }).catchError((err) {
                   // debugPrint("Image catchError ${err.toString()}");
                   // });
-
                   _nameOfOrganizationController.text = "";
-                  _locationController.text = "";
                   _registrationDateController.text = "";
                   Navigator.of(context).pop();
                 },
@@ -254,6 +335,49 @@ class _RegisterBillboardState extends State<RegisterBillboard> {
                 ),
               ),
             ),
+
+            Container(
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(5),
+              ),
+              margin: const EdgeInsets.only(
+                bottom: 15,
+              ),
+              child: _imageFile != null
+                  ? Image.file(
+                      File(_imageFile!.path),
+                      fit: BoxFit.cover,
+                      // width: 250,
+                      height: 120,
+                    )
+                  : GestureDetector(
+                      onTap: () {
+                        _showPickCameraDialog(context);
+                      },
+                      child: Container(
+                        alignment: Alignment.center,
+                        margin: const EdgeInsets.symmetric(
+                            vertical: 15, horizontal: 50),
+                        padding: const EdgeInsets.all(15),
+                        decoration: BoxDecoration(
+                          color: Color(0xff056839),
+                          border: Border.all(
+                            color: Color(0xff056839),
+                          ),
+                          borderRadius: BorderRadius.circular(5),
+                        ),
+                        child: Text(
+                          "Capture Billboard",
+                          style: TextStyle(
+                            color: Color(0xffffffff),
+                            fontSize: 16,
+                            fontWeight: FontWeight.w900,
+                          ),
+                        ),
+                      ),
+                    ),
+            ),
             Container(
               margin: const EdgeInsets.only(bottom: 25),
               child: Padding(
@@ -285,37 +409,37 @@ class _RegisterBillboardState extends State<RegisterBillboard> {
                 ),
               ),
             ),
-            Container(
-              margin: const EdgeInsets.only(bottom: 25),
-              child: Padding(
-                padding: EdgeInsets.only(left: 5, right: 5),
-                child: TextField(
-                  controller: _locationController,
-                  keyboardType: TextInputType.text,
-                  decoration: InputDecoration(
-                      enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Color(0xffB3B3B3)),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Color(0xff000000)),
-                      ),
-                      border: OutlineInputBorder(
-                        borderSide: BorderSide(color: Color(0xffB3B3B3)),
-                      ),
-                      labelText: 'Location of Billboard',
-                      labelStyle: TextStyle(
-                          color: Color(0xff000000),
-                          fontSize: 12,
-                          fontWeight: FontWeight.w600),
-                      contentPadding: EdgeInsets.only(bottom: 0, left: 10),
-                      hintText: 'Location of Billboard',
-                      hintStyle: TextStyle(
-                          color: Color(0xff000000),
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600)),
-                ),
-              ),
-            ),
+            // Container(
+            // margin: const EdgeInsets.only(bottom: 25),
+            // child: Padding(
+            // padding: EdgeInsets.only(left: 5, right: 5),
+            // child: TextField(
+            // controller: _locationController,
+            // keyboardType: TextInputType.text,
+            // decoration: InputDecoration(
+            // enabledBorder: OutlineInputBorder(
+            // borderSide: BorderSide(color: Color(0xffB3B3B3)),
+            // ),
+            // focusedBorder: OutlineInputBorder(
+            // borderSide: BorderSide(color: Color(0xff000000)),
+            // ),
+            // border: OutlineInputBorder(
+            // borderSide: BorderSide(color: Color(0xffB3B3B3)),
+            // ),
+            // labelText: 'Location of Billboard',
+            // labelStyle: TextStyle(
+            // color: Color(0xff000000),
+            // fontSize: 12,
+            // fontWeight: FontWeight.w600),
+            // contentPadding: EdgeInsets.only(bottom: 0, left: 10),
+            // hintText: 'Location of Billboard',
+            // hintStyle: TextStyle(
+            // color: Color(0xff000000),
+            // fontSize: 16,
+            // fontWeight: FontWeight.w600)),
+            // ),
+            // ),
+            // ),
             Container(
               margin: const EdgeInsets.only(bottom: 25),
               child: Padding(
