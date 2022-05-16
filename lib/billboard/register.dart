@@ -18,7 +18,6 @@ import 'package:image_picker/image_picker.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:screenshot/screenshot.dart';
-import 'package:visibility_detector/visibility_detector.dart';
 
 class RegisterBillboard extends StatefulWidget {
   RegisterBillboard({Key? key}) : super(key: key);
