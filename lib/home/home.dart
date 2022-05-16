@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:math' as math;
 
+import 'package:bilbo/billboard/qr_code.dart';
 import 'package:bilbo/billboard/register.dart';
 import 'package:bilbo/billboard/verify.dart';
 import 'package:bilbo/utils/utils.dart';
@@ -17,40 +18,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  Position? userCurrentPosition;
-
-  var geoLocator = Geolocator();
-
-  LocationPermission? _locationPermission;
-
-  checkIfLocationPermissionIsAllowed() async {
-    _locationPermission = await Geolocator.requestPermission();
-
-    if (_locationPermission == LocationPermission.denied) {
-      _locationPermission = await Geolocator.requestPermission();
-    } else {
-      locateUserPosition();
-    }
-  }
-
-  locateUserPosition() async {
-    Position cPosition = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high);
-
-    userCurrentPosition = cPosition;
-
-    String formattedAddress =
-        await UtilMethods.searchAddressForGeographicCoordinates(
-            userCurrentPosition!, context);
-    print("This is your formatted Address $formattedAddress");
-  }
-
-  @override
-  initState() {
-    super.initState();
-    checkIfLocationPermissionIsAllowed();
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -135,7 +102,8 @@ class _HomePageState extends State<HomePage> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => RegisterBillboard()),
+                              builder: (context) => RegisterBillboard(),
+                            ),
                           );
                         },
                         child: Container(
@@ -217,7 +185,10 @@ class _HomePageState extends State<HomePage> {
                                 child: Container(
                                     height: 70,
                                     width: 70,
-                                    margin: EdgeInsets.only(left: 0)),
+                                    margin:
+                                        EdgeInsets.only(top: 10, bottom: 10),
+                                    child: Image.asset(
+                                        'assets/images/verify_billboard.png')),
                               ),
                             ],
                           ),
