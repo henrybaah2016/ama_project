@@ -6,7 +6,7 @@ import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:qr_code_scanner/qr_code_scanner.dart';
+// import 'package:qr_code_scanner/qr_code_scanner.dart';
 
 class VerifyBillboard extends StatefulWidget {
   VerifyBillboard({Key? key}) : super(key: key);
@@ -31,12 +31,12 @@ class _VerifyBillboardState extends State<VerifyBillboard> {
   // });
   // }
   final qrKey = GlobalKey();
-  QRViewController? controller;
-  Barcode? barcode;
+  // QRViewController? controller;
+  // Barcode? barcode;
 
   @override
   void dispose() {
-    controller?.dispose();
+    // controller?.dispose();
     super.dispose();
   }
 
@@ -44,10 +44,10 @@ class _VerifyBillboardState extends State<VerifyBillboard> {
   void reassemble() async {
     super.reassemble();
     if (Platform.isAndroid) {
-      await controller!.pauseCamera();
+      // await controller!.pauseCamera();
     }
 
-    controller!.resumeCamera();
+    // controller!.resumeCamera();
   }
 
   @override
@@ -118,7 +118,7 @@ class _VerifyBillboardState extends State<VerifyBillboard> {
       body: Stack(
         alignment: Alignment.center,
         children: [
-          buildQrView(context),
+          // buildQrView(context),
           Positioned(
             bottom: 10,
             child: buildResult(),
@@ -143,36 +143,36 @@ class _VerifyBillboardState extends State<VerifyBillboard> {
     );
   }
 
-  Widget buildQrView(BuildContext context) {
-    return QRView(
-      key: qrKey,
-      onQRViewCreated: onQRViewCreated,
-      overlay: QrScannerOverlayShape(
-        cutOutSize: MediaQuery.of(context).size.width * 0.8,
-        borderWidth: 10,
-        borderLength: 20,
-        borderRadius: 10,
-        borderColor: Color(0xff056839),
-      ),
-    );
-  }
-
-  void onQRViewCreated(QRViewController mController) {
-    setState(() {
-      controller = mController;
-    });
-
-    controller!.scannedDataStream.listen((mBarCode) {
-      setState(() {
-        barcode = mBarCode;
-      });
-
-      print("BAR CODE CONTENT ${barcode!.code}");
-
-      if (barcode != null) {
-        Navigator.of(context)
-            .popAndPushNamed(Result.routeName, arguments: barcode!.code);
-      }
-    });
-  }
+  // Widget buildQrView(BuildContext context) {
+  //   return QRView(
+  //     key: qrKey,
+  //     onQRViewCreated: onQRViewCreated,
+  //     overlay: QrScannerOverlayShape(
+  //       cutOutSize: MediaQuery.of(context).size.width * 0.8,
+  //       borderWidth: 10,
+  //       borderLength: 20,
+  //       borderRadius: 10,
+  //       borderColor: Color(0xff056839),
+  //     ),
+  //   );
+  // }
+  //
+  // void onQRViewCreated(QRViewController mController) {
+  //   setState(() {
+  //     controller = mController;
+  //   });
+  //
+  //   controller!.scannedDataStream.listen((mBarCode) {
+  //     setState(() {
+  //       barcode = mBarCode;
+  //     });
+  //
+  //     print("BAR CODE CONTENT ${barcode!.code}");
+  //
+  //     if (barcode != null) {
+  //       Navigator.of(context)
+  //           .popAndPushNamed(Result.routeName, arguments: barcode!.code);
+  //     }
+  //   });
+  // }
 }
